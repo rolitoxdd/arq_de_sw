@@ -132,6 +132,35 @@ def update_maquinaria(id_maquinaria, nombre, estado, costo):
     conn.close()
     return c.rowcount
 
+
+def delete_maquinaria(id_maquinaria):
+    conn = sqlite3.connect('db.sqlite3')
+    c = conn.cursor()
+
+    c.execute(
+        '''UPDATE maquinarias SET fecha_salida = CURRENT_DATE WHERE id = ?''',
+        (id_maquinaria)
+    )
+
+    conn.commit()
+    conn.close()
+    return c.rowcount
+
+
+def insert_componente(id_maquinaria, nombre, estado, marca, modelo, costo):
+    conn = sqlite3.connect('db.sqlite3')
+    c = conn.cursor()
+
+    c.execute(
+        '''INSERT INTO componentes (id_maquinaria, nombre, estado, marca, modelo, costo) VALUES (?, ?, ?, ?, ?, ?)''',
+        (id_maquinaria, nombre, estado, marca, modelo, costo)
+    )
+
+    conn.commit()
+    conn.close()
+    return c.rowcount
+
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'

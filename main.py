@@ -91,8 +91,12 @@ class App:
 
 def display_maquinarias(res):
     data = eval(res[12:])
+    maquinarias = [maquinaria for maquinaria in data if not maquinaria[5]]
+    if len(maquinarias) == 0:
+        f_print('No se encontraron maquinarias')
+        return
     g_print('Maquinarias encontradas:')
-    for maquinaria in data:
+    for maquinaria in maquinarias:
         b_print('-'*20)
         print('id', maquinaria[0])
         print('nombre', maquinaria[1])
@@ -172,6 +176,50 @@ if __name__ == '__main__':
                         'key': 'costo',
                         'desc': 'Ingresa el nuevo costo de la maquinaria: '
                     }
+                ]
+            },
+            {
+                'id': 'serv5',
+                'desc': 'Eliminar maquinaria',
+                'user_types': [0, 1, 2],
+                'function': lambda res: g_print('maquinaria eliminada') if eval(res[12:]) > 0 else f_print('maquinaria no encontrada'),
+                'inputs': [
+                    {
+                        'key': 'id',
+                        'desc': 'Ingresa el id de la maquinaria: '
+                    }
+                ]
+            },
+            {
+                'id': 'serv6',
+                'desc': 'Registrar componente',
+                'user_types': [0, 1, 2],
+                'function': lambda *_: g_print('componente registrado'),
+                'inputs': [
+                    {
+                        'key': 'nombre',
+                        'desc': 'Ingresa el nombre del componente: ',
+                    },
+                    {
+                        'key': 'estado',
+                        'desc': 'Ingresa el estado del componente: ',
+                    },
+                    {
+                        'key': 'marca',
+                        'desc': 'Ingresa la marca del componente: '
+                    },
+                    {
+                        'key': 'modelo',
+                        'desc': 'Ingresa el modelo del componente: '
+                    },
+                    {
+                        'key': 'costo',
+                        'desc': 'Ingresa el costo del componente: '
+                    },
+                    {
+                        'key': 'id_maquinaria',
+                        'desc': 'Ingresa el id de la maquinaria: '
+                    },
                 ]
             }
         ])
