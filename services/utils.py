@@ -25,7 +25,7 @@ def create_tables():
     conn = sqlite3.connect('db.sqlite3')
     c = conn.cursor()
 
-    x = c.execute(
+    c.execute(
         '''CREATE TABLE IF NOT EXISTS users
             (
                 rut text PRIMARY KEY,
@@ -37,6 +37,36 @@ def create_tables():
             '''
     )
 
+    c.execute(
+        '''CREATE TABLE IF NOT EXISTS maquinarias
+            (
+                id integer PRIMARY KEY AUTOINCREMENT,
+                nombre text,
+                estado text,
+                costo integer,
+                fecha_ingreso datetime DEFAULT CURRENT_DATE,
+                fecha_salida datetime
+            )
+        '''
+    )
+
+    c.execute(
+        '''CREATE TABLE IF NOT EXISTS componentes
+            (
+                id integer PRIMARY KEY AUTOINCREMENT,
+                id_maquinaria integer,
+                nombre text,
+                estado text,
+                marca text,
+                modelo text,
+                costo integer,
+                fecha_ingreso datetime DEFAULT CURRENT_DATE,
+                fecha_salida datetime,
+                FOREIGN KEY (id_maquinaria) REFERENCES maquinarias (id)
+            )
+        '''
+    )
+
     conn.commit()
     conn.close()
 
@@ -45,8 +75,16 @@ def drop_tables():
     conn = sqlite3.connect('db.sqlite3')
     c = conn.cursor()
 
-    x = c.execute(
+    c.execute(
         '''DROP TABLE IF EXISTS users'''
+    )
+
+    c.execute(
+        '''DROP TABLE IF EXISTS maquinarias'''
+    )
+
+    c.execute(
+        '''DROP TABLE IF EXISTS componentes'''
     )
 
     conn.commit()
@@ -57,13 +95,40 @@ def insert_user(email, name, password, rut, type):
     conn = sqlite3.connect('db.sqlite3')
     c = conn.cursor()
 
-    x = c.execute(
+    c.execute(
         '''INSERT INTO users (email, name, password, rut, type) VALUES (?, ?, ?, ?, ?)''',
         (email, name, password, rut, type)
     )
 
     conn.commit()
     conn.close()
+
+
+def insert_maquinaria(nombre, estado, costo):
+    conn = sqlite3.connect('db.sqlite3')
+    c = conn.cursor()
+
+    c.execute(
+        '''INSERT INTO maquinarias (nombre, estado, costo) VALUES (?, ?, ?)''',
+        (nombre, estado, costo)
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def consulta_maquinaria(id_maquinaria=''):
+    conn = sqlite3.connect('db.sqlite3')
+    c = conn.cursor()
+    if id_maquinaria == '':
+        c.execute('''SELECT * FROM maquinarias''')
+    else:
+        c.execute(
+            '''SELECT * FROM maquinarias WHERE id = ?''', (id_maquinaria,))
+    res = c.fetchall()
+    conn.commit()
+    conn.close()
+    return res
 
 
 class bcolors:
@@ -96,6 +161,10 @@ def b_print(*text):
 
 def h_print(*text):
     print(bcolors.HEADER, *text, bcolors.ENDC)
+
+
+def u_print(*text):
+    print(bcolors.UNDERLINE, *text, bcolors.ENDC)
 
 
 if __name__ == '__main__':
