@@ -149,6 +149,30 @@ if __name__ == '__main__':
                         'desc': 'Ingresa el id de la maquinaria o vacío para consultar por todas: '
                     }
                 ]
+            },
+            {
+                'id': 'serv4',
+                'desc': 'Modificar maquinaria',
+                'user_types': [0, 1, 2],
+                'function': lambda res: g_print('maquinaria modificada') if len(eval(res[12:])) > 0 else f_print('maquinaria no encontrada'),
+                'inputs': [
+                    {
+                        'key': 'id',
+                        'desc': 'Ingresa el id de la maquinaria: '
+                    },
+                    {
+                        'key': 'nombre',
+                        'desc': 'Ingresa el nuevo nombre de la maquinaria: ',
+                    },
+                    {
+                        'key': 'estado',
+                        'desc': 'Ingresa el nuevo estado de la maquinaria: ',
+                    },
+                    {
+                        'key': 'costo',
+                        'desc': 'Ingresa el nuevo costo de la maquinaria: '
+                    }
+                ]
             }
         ])
     res = app.show_menu()

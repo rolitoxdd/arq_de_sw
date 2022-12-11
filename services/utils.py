@@ -1,4 +1,5 @@
 import sqlite3
+import os
 
 
 def str_bus_format(data, service_name='g7999'):
@@ -71,24 +72,11 @@ def create_tables():
     conn.close()
 
 
-def drop_tables():
-    conn = sqlite3.connect('db.sqlite3')
-    c = conn.cursor()
-
-    c.execute(
-        '''DROP TABLE IF EXISTS users'''
-    )
-
-    c.execute(
-        '''DROP TABLE IF EXISTS maquinarias'''
-    )
-
-    c.execute(
-        '''DROP TABLE IF EXISTS componentes'''
-    )
-
-    conn.commit()
-    conn.close()
+def remove_db():
+    try:
+        os.remove('db.sqlite3')
+    except:
+        pass
 
 
 def insert_user(email, name, password, rut, type):
@@ -131,6 +119,19 @@ def consulta_maquinaria(id_maquinaria=''):
     return res
 
 
+def update_maquinaria(id_maquinaria, nombre, estado, costo):
+    conn = sqlite3.connect('db.sqlite3')
+    c = conn.cursor()
+
+    c.execute(
+        '''UPDATE maquinarias SET nombre = ?, estado = ?, costo = ? WHERE id = ?''',
+        (nombre, estado, costo, id_maquinaria)
+    )
+
+    conn.commit()
+    conn.close()
+    return c.rowcount
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -168,7 +169,7 @@ def u_print(*text):
 
 
 if __name__ == '__main__':
-    drop_tables()
+    remove_db()
     create_tables()
     insert_user('admin@email.com', 'admin', 'admin',
                 '12345678-9', 0)  # admin (type 0)
