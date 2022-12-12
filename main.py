@@ -124,6 +124,20 @@ def display_componentes(res):
         print('fecha de creacion', componente[7])
 
 
+def display_historial_componente(res):
+    data = eval(res[12:])
+    for componente in data:
+        b_print('-'*20)
+        print('id', componente[0])
+        print('id_maquinaria', componente[1])
+        print('nombre', componente[2])
+        print('estado', componente[3])
+        print('marca', componente[4])
+        print('modelo', componente[5])
+        print('costo', componente[6])
+        print('fecha de modificacion', componente[7])
+
+
 if __name__ == '__main__':
     app = App(
         login_service={
@@ -177,7 +191,7 @@ if __name__ == '__main__':
                 'id': 'serv4',
                 'desc': 'Modificar maquinaria',
                 'user_types': [0, 1, 2],
-                'function': lambda res: g_print('maquinaria modificada') if len(eval(res[12:])) > 0 else f_print('maquinaria no encontrada'),
+                'function': lambda res: g_print('maquinaria modificada') if eval(res[12:]) > 0 else f_print('maquinaria no encontrada'),
                 'inputs': [
                     {
                         'key': 'id',
@@ -288,6 +302,18 @@ if __name__ == '__main__':
                         'key': 'id_maquinaria',
                         'desc': 'Ingresa el nuevo id de la maquinaria: '
                     },
+                ]
+            },
+            {
+                'id': 'serv9',
+                'desc': 'Historial de componente',
+                'user_types': [0, 1, 2],
+                'function': display_historial_componente,
+                'inputs': [
+                    {
+                        'key': 'id',
+                        'desc': 'Ingresa el id del componente: '
+                    }
                 ]
             }
         ]

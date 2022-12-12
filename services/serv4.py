@@ -1,6 +1,6 @@
 import socket
 import utils
-from utils import consulta_maquinaria
+from utils import update_maquinaria
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_address = ('localhost', 5000)
@@ -19,6 +19,12 @@ if (status == 'OK'):
         print(received_message)
         client_id = received_message[5:10]
         data = eval(received_message[10:])
-        ans = consulta_maquinaria(data['id'])
+        ans = update_maquinaria(
+            id_maquinaria=data['id'],
+            nombre=data['nombre'],
+            estado=data['estado'],
+            costo=data['costo']
+        )
+        print('ans', ans)
         response = utils.str_bus_format(ans, str(client_id)).encode('UTF-8')
         sock.send(response)

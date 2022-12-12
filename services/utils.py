@@ -30,10 +30,10 @@ def create_tables():
         '''CREATE TABLE IF NOT EXISTS users
             (
                 rut text PRIMARY KEY,
-                email text, 
-                name text, 
+                email text,
+                name text,
                 password text,
-                type integer DEFAULT 0 
+                type integer DEFAULT 0
             )
             '''
     )
@@ -68,6 +68,105 @@ def create_tables():
         '''
     )
 
+    c.execute(
+        '''CREATE TABLE IF NOT EXISTS historial_componentes
+            (
+                id integer PRIMARY KEY AUTOINCREMENT,
+                id_componente integer,
+                id_maquinaria integer,
+                nombre text,
+                estado text,
+                marca text,
+                modelo text,
+                costo integer,
+                fecha_ingreso datetime,
+                fecha_salida datetime,
+                fecha_modificacion datetime DEFAULT CURRENT_DATE,
+                FOREIGN KEY (id_componente) REFERENCES componentes (id),
+                FOREIGN KEY (id_maquinaria) REFERENCES maquinarias (id)
+            )
+        '''
+    )
+
+    c.execute(
+        '''CREATE TRIGGER IF NOT EXISTS update_componente
+            AFTER UPDATE ON componentes
+            BEGIN
+                INSERT INTO historial_componentes 
+                (
+                    id_componente, 
+                    id_maquinaria, 
+                    nombre, 
+                    estado, 
+                    marca, 
+                    modelo, 
+                    costo, 
+                    fecha_ingreso, 
+                    fecha_salida                    
+                )
+                VALUES (
+                    OLD.id, 
+                    OLD.id_maquinaria, 
+                    OLD.nombre, 
+                    OLD.estado, 
+                    OLD.marca,
+                    OLD.modelo, 
+                    OLD.costo, 
+                    OLD.fecha_ingreso, 
+                    OLD.fecha_salida
+                );
+            END
+        '''
+    )
+
+    c.execute(
+        '''CREATE TRIGGER IF NOT EXISTS insert_componente
+            AFTER INSERT ON componentes
+            BEGIN
+                INSERT INTO historial_componentes (id_componente, id_maquinaria, nombre, estado, marca, modelo, costo, fecha_ingreso, fecha_salida)
+                VALUES (NEW.id, NEW.id_maquinaria, NEW.nombre, NEW.estado, NEW.marca,
+                        NEW.modelo, NEW.costo, NEW.fecha_ingreso, NEW.fecha_salida);
+            END
+        '''
+    )
+
+    c.execute(
+        '''CREATE TABLE IF NOT EXISTS historial_maquinarias
+            (
+                id integer PRIMARY KEY AUTOINCREMENT,
+                id_maquinaria integer,
+                nombre text,
+                estado text,
+                costo integer,
+                fecha_ingreso datetime,
+                fecha_salida datetime,
+                fecha_modificacion datetime DEFAULT CURRENT_DATE,
+                FOREIGN KEY (id_maquinaria) REFERENCES maquinarias (id)
+            )'''
+    )
+
+    c.execute(
+        '''CREATE TRIGGER IF NOT EXISTS update_maquinaria
+            AFTER UPDATE ON maquinarias
+            BEGIN
+                INSERT INTO historial_maquinarias (id_maquinaria, nombre, estado, costo, fecha_ingreso, fecha_salida)
+                VALUES (OLD.id, OLD.nombre, OLD.estado, OLD.costo,
+                        OLD.fecha_ingreso, OLD.fecha_salida);
+            END
+        '''
+    )
+
+    c.execute(
+        '''CREATE TRIGGER IF NOT EXISTS insert_maquinaria
+            AFTER INSERT ON maquinarias
+            BEGIN
+                INSERT INTO historial_maquinarias (id_maquinaria, nombre, estado, costo, fecha_ingreso, fecha_salida)
+                VALUES (NEW.id, NEW.nombre, NEW.estado, NEW.costo,
+                        NEW.fecha_ingreso, NEW.fecha_salida);
+            END
+        '''
+    )
+
     conn.commit()
     conn.close()
 
@@ -84,7 +183,7 @@ def insert_user(email, name, password, rut, type):
     c = conn.cursor()
 
     c.execute(
-        '''INSERT INTO users (email, name, password, rut, type) VALUES (?, ?, ?, ?, ?)''',
+        '''INSERT INTO users(email, name, password, rut, type) VALUES(?, ?, ?, ?, ?)''',
         (email, name, password, rut, type)
     )
 
@@ -97,7 +196,7 @@ def insert_maquinaria(nombre, estado, costo):
     c = conn.cursor()
 
     c.execute(
-        '''INSERT INTO maquinarias (nombre, estado, costo) VALUES (?, ?, ?)''',
+        '''INSERT INTO maquinarias(nombre, estado, costo) VALUES(?, ?, ?)''',
         (nombre, estado, costo)
     )
 
@@ -112,7 +211,7 @@ def consulta_maquinaria(id_maquinaria=''):
         c.execute('''SELECT * FROM maquinarias''')
     else:
         c.execute(
-            '''SELECT * FROM maquinarias WHERE id = ?''', (id_maquinaria,))
+            '''SELECT * FROM maquinarias WHERE id= ?''', (id_maquinaria,))
     res = c.fetchall()
     conn.commit()
     conn.close()
@@ -124,7 +223,7 @@ def update_maquinaria(id_maquinaria, nombre, estado, costo):
     c = conn.cursor()
 
     c.execute(
-        '''UPDATE maquinarias SET nombre = ?, estado = ?, costo = ? WHERE id = ?''',
+        '''UPDATE maquinarias SET nombre= ?, estado= ?, costo= ? WHERE id= ?''',
         (nombre, estado, costo, id_maquinaria)
     )
 
@@ -138,7 +237,7 @@ def delete_maquinaria(id_maquinaria):
     c = conn.cursor()
 
     c.execute(
-        '''UPDATE maquinarias SET fecha_salida = CURRENT_DATE WHERE id = ?''',
+        '''UPDATE maquinarias SET fecha_salida=CURRENT_DATE WHERE id= ?''',
         (id_maquinaria)
     )
 
@@ -152,7 +251,7 @@ def insert_componente(id_maquinaria, nombre, estado, marca, modelo, costo):
     c = conn.cursor()
 
     c.execute(
-        '''INSERT INTO componentes (id_maquinaria, nombre, estado, marca, modelo, costo) VALUES (?, ?, ?, ?, ?, ?)''',
+        '''INSERT INTO componentes(id_maquinaria, nombre, estado, marca, modelo, costo) VALUES(?, ?, ?, ?, ?, ?)''',
         (id_maquinaria, nombre, estado, marca, modelo, costo)
     )
 
@@ -168,7 +267,19 @@ def consulta_componente(id_componente=''):
         c.execute('''SELECT * FROM componentes''')
     else:
         c.execute(
-            '''SELECT * FROM componentes WHERE id = ?''', (id_componente,))
+            '''SELECT * FROM componentes WHERE id= ?''', (id_componente,))
+    res = c.fetchall()
+    conn.commit()
+    conn.close()
+    return res
+
+
+def consulta_historial_componente(id_componente=''):
+    conn = sqlite3.connect('db.sqlite3')
+    c = conn.cursor()
+    print(id_componente)
+    c.execute(
+        '''SELECT * FROM historial_componentes WHERE id_componente= ?''', (id_componente,))
     res = c.fetchall()
     conn.commit()
     conn.close()
@@ -188,14 +299,14 @@ def update_componente(
     c = conn.cursor()
 
     c.execute(
-        '''UPDATE componentes 
-        SET id_maquinaria = ?, 
-            nombre = ?, 
-            estado = ?, 
-            marca = ?, 
-            modelo = ?, 
-            costo = ? 
-        WHERE id = ?''',
+        '''UPDATE componentes
+        SET id_maquinaria= ?,
+            nombre= ?,
+            estado= ?,
+            marca= ?,
+            modelo= ?,
+            costo= ?
+        WHERE id= ?''',
         (
             id_maquinaria,
             nombre,
