@@ -22,6 +22,5 @@ if (status == 'OK'):
         ans = consulta_historial_componente(
             id_componente=data['id']
         )
-        print('ans', ans)
         response = utils.str_bus_format(ans, str(client_id)).encode('UTF-8')
         sock.send(response)
