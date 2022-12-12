@@ -175,6 +175,43 @@ def consulta_componente(id_componente=''):
     return res
 
 
+def update_componente(
+    id_componente,
+    id_maquinaria,
+    nombre,
+    estado,
+    marca,
+    modelo,
+    costo
+):
+    conn = sqlite3.connect('db.sqlite3')
+    c = conn.cursor()
+
+    c.execute(
+        '''UPDATE componentes 
+        SET id_maquinaria = ?, 
+            nombre = ?, 
+            estado = ?, 
+            marca = ?, 
+            modelo = ?, 
+            costo = ? 
+        WHERE id = ?''',
+        (
+            id_maquinaria,
+            nombre,
+            estado,
+            marca,
+            modelo,
+            costo,
+            id_componente
+        )
+    )
+
+    conn.commit()
+    conn.close()
+    return c.rowcount
+
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'

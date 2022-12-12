@@ -252,6 +252,44 @@ if __name__ == '__main__':
                         'desc': 'Ingresa el id del componente o vacío para consultar por todas: '
                     }
                 ]
+            },
+            {
+                'id': 'serv8',
+                'desc': 'Modificar componente',
+                'user_types': [0, 1, 2],
+                'function': lambda res: g_print('componente modificado') if (eval(res[12:])) > 0 else f_print('componente no encontrado'),
+                'inputs': [
+                    {
+                        'key': 'id',
+                        'desc': 'Ingresa el id del componente: '
+                    },
+                    {
+                        'key': 'nombre',
+                        'desc': 'Ingresa el nuevo nombre del componente: ',
+                    },
+                    {
+                        'key': 'estado',
+                        'desc': 'Ingresa el nuevo estado del componente: ',
+
+                    },
+                    {
+                        'key': 'marca',
+                        'desc': 'Ingresa la nueva marca del componente: '
+                    },
+                    {
+                        'key': 'modelo',
+                        'desc': 'Ingresa el nuevo modelo del componente: '
+                    },
+                    {
+                        'key': 'costo',
+                        'desc': 'Ingresa el nuevo costo del componente: '
+                    },
+                    {
+                        'key': 'id_maquinaria',
+                        'desc': 'Ingresa el nuevo id de la maquinaria: '
+                    },
+                ]
             }
-        ])
+        ]
+    )
     res = app.show_menu()
