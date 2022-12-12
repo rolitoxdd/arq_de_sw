@@ -161,6 +161,20 @@ def insert_componente(id_maquinaria, nombre, estado, marca, modelo, costo):
     return c.rowcount
 
 
+def consulta_componente(id_componente=''):
+    conn = sqlite3.connect('db.sqlite3')
+    c = conn.cursor()
+    if id_componente == '':
+        c.execute('''SELECT * FROM componentes''')
+    else:
+        c.execute(
+            '''SELECT * FROM componentes WHERE id = ?''', (id_componente,))
+    res = c.fetchall()
+    conn.commit()
+    conn.close()
+    return res
+
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -202,3 +216,12 @@ if __name__ == '__main__':
     create_tables()
     insert_user('admin@email.com', 'admin', 'admin',
                 '12345678-9', 0)  # admin (type 0)
+    insert_maquinaria('maquinaria1', 'nuevo', 100)
+    insert_maquinaria('maquinaria2', 'casi nuevo', 200)
+    insert_maquinaria('maquinaria3', 'usado', 50)
+    insert_componente(1, 'componente2', 'nuevo', 'marca2', 'modelo2', 20)
+    insert_componente(1, 'componente3', 'nuevo', 'marca3', 'modelo3', 30)
+    insert_componente(2, 'componente4', 'nuevo', 'marca4', 'modelo4', 40)
+    insert_componente(2, 'componente5', 'nuevo', 'marca5', 'modelo5', 50)
+    insert_componente(2, 'componente6', 'nuevo', 'marca6', 'modelo6', 60)
+    insert_componente(3, 'componente7', 'nuevo', 'marca7', 'modelo7', 70)

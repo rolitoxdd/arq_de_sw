@@ -105,6 +105,25 @@ def display_maquinarias(res):
         print('fecha de creacion', maquinaria[4])
 
 
+def display_componentes(res):
+    data = eval(res[12:])
+    componentes = [componente for componente in data if not componente[8]]
+    if len(data) == 0:
+        f_print('No se encontraron componentes')
+        return
+    g_print('Componentes encontrados:')
+    for componente in componentes:
+        b_print('-'*20)
+        print('id', componente[0])
+        print('id_maquinaria', componente[1])
+        print('nombre', componente[2])
+        print('estado', componente[3])
+        print('marca', componente[4])
+        print('modelo', componente[5])
+        print('costo', componente[6])
+        print('fecha de creacion', componente[7])
+
+
 if __name__ == '__main__':
     app = App(
         login_service={
@@ -220,6 +239,18 @@ if __name__ == '__main__':
                         'key': 'id_maquinaria',
                         'desc': 'Ingresa el id de la maquinaria: '
                     },
+                ]
+            },
+            {
+                'id': 'serv7',
+                'desc': 'Consultar componentes',
+                'user_types': [0, 1, 2],
+                'function': display_componentes,
+                'inputs': [
+                    {
+                        'key': 'id',
+                        'desc': 'Ingresa el id del componente o vacío para consultar por todas: '
+                    }
                 ]
             }
         ])
