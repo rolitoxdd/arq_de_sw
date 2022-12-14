@@ -2,7 +2,7 @@ import sqlite3
 import os
 
 
-def str_bus_format(data, service_name='g7999'):
+def str_bus_format(data, service_name=''):
     total_digits = 5
 
     transformed_data = str(data)
